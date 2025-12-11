@@ -1,3 +1,4 @@
+
 #pragma once
 
 #include "lve_window.hpp"
@@ -34,7 +35,7 @@ class LveDevice {
 
   // Not copyable or movable
   LveDevice(const LveDevice &) = delete;
-  LveDevice operator=(const LveDevice &) = delete;
+  LveDevice &operator=(const LveDevice &) = delete;
   LveDevice(LveDevice &&) = delete;
   LveDevice &operator=(LveDevice &&) = delete;
 
