@@ -6,7 +6,9 @@
 *.lo
 *.o
 *.obj
-*.out
+
+# Compiled shaders
+*.spv
 
 # Precompiled Headers
 *.gch
