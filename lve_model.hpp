@@ -1,5 +1,6 @@
 #pragma once
 
+#include <glm/fwd.hpp>
 #include <vector>
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
@@ -19,7 +20,12 @@ namespace lve {
             static std::vector<VkVertexInputAttributeDescription> getAttributeDescriptions();
         };
 
-        LveModel(LveDevice &device, const std::vector<Vertex> &verticies);
+        struct Builder {
+          std::vector<Vertex> verticies{};
+          std::vector<uint32_t> indicies{};
+        };
+
+        LveModel(LveDevice &device, const LveModel::Builder &builder);
         ~LveModel();
 
         LveModel(const LveModel &) = delete;
@@ -30,10 +36,16 @@ namespace lve {
 
         private:
         void createVertexBuffers(const std::vector<Vertex> &verticies);
+        void createIndexBuffers(const std::vector<Vertex> &indicies);
 
         LveDevice& lveDevice;
+        
         VkBuffer vertexBuffer;
         VkDeviceMemory vertexBufferMemory;
         uint32_t vertexCount;
+        bool hasIndexBuffer = false;
+        VkBuffer indexBuffer;
+        VkDeviceMemory indexBufferMemory;
+        uint32_t indexCount;
     };
 }

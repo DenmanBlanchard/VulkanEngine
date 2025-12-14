@@ -8,9 +8,8 @@
 
 namespace lve {
   void KeyboardMoveMentController::moveInPlaneXZ(GLFWwindow* window, float dt, LveGameObject& gameObject) {
-    
-    // Keyboard Movement
     glm::vec3 rotate{0};
+    // Keyboard Movement
     if (glfwGetKey(window, keys.lookRight) == GLFW_PRESS) rotate.y += 1.f;
     if (glfwGetKey(window, keys.lookLeft) == GLFW_PRESS) rotate.y -= 1.f;
     if (glfwGetKey(window, keys.lookUp) == GLFW_PRESS) rotate.x += 1.f;
