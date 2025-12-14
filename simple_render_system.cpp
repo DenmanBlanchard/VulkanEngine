@@ -1,4 +1,5 @@
 #include "simple_render_system.hpp"
+#include "lve_camera.hpp"
 #include "lve_device.hpp"
 #include <glm/common.hpp>
 #include <vulkan/vulkan_core.h>
@@ -59,7 +60,7 @@ void SimpleRenderSystem::createPipeline(VkRenderPass renderPass) {
       pipelineConfig);
 }
 
-void SimpleRenderSystem::renderGameObjects(VkCommandBuffer commandBuffer, std::vector<LveGameObject>& gameObjects) {
+void SimpleRenderSystem::renderGameObjects(VkCommandBuffer commandBuffer, std::vector<LveGameObject>& gameObjects, const LveCamera& camera) {
   lvePipeline->bind(commandBuffer);
 
   for (auto& obj: gameObjects) {
@@ -67,7 +68,7 @@ void SimpleRenderSystem::renderGameObjects(VkCommandBuffer commandBuffer, std::v
     obj.transform.rotation.x = glm::mod(obj.transform.rotation.x + (0.01f / 40), glm::two_pi<float>());
     SimplePushConstantData push{};
     push.color = obj.color;
-    push.transform = obj.transform.mat4();
+    push.transform = camera.getProjection() * obj.transform.mat4();
 
     vkCmdPushConstants(commandBuffer, pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(SimplePushConstantData), &push);
     obj.model->bind(commandBuffer);
