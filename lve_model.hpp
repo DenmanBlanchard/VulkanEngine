@@ -21,8 +21,8 @@ namespace lve {
         };
 
         struct Builder {
-          std::vector<Vertex> verticies{};
-          std::vector<uint32_t> indicies{};
+          std::vector<Vertex> vertices{};
+          std::vector<uint32_t> indices{};
         };
 
         LveModel(LveDevice &device, const LveModel::Builder &builder);
@@ -36,13 +36,14 @@ namespace lve {
 
         private:
         void createVertexBuffers(const std::vector<Vertex> &verticies);
-        void createIndexBuffers(const std::vector<Vertex> &indicies);
+        void createIndexBuffers(const std::vector<uint32_t> &indicies);
 
         LveDevice& lveDevice;
-        
+
         VkBuffer vertexBuffer;
         VkDeviceMemory vertexBufferMemory;
         uint32_t vertexCount;
+
         bool hasIndexBuffer = false;
         VkBuffer indexBuffer;
         VkDeviceMemory indexBufferMemory;
