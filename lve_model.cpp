@@ -1,18 +1,29 @@
 #include "lve_model.hpp"
+#include "lve_utils.hpp"
 #include "lve_device.hpp"
-#include <iostream>
-#include <memory>
-#include <stdexcept>
-#include <string>
-#include <vector>
 
 //libs
 #define TINYOBJLOADER_IMPLEMENTATION
 #include "tiny_obj_loader.h"
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/hash.hpp>
 
 // std
 #include <cassert>
 #include <cstring>
+#include <unordered_map>
+
+
+namespace std {
+  template <>
+  struct hash<lve::LveModel::Vertex> {
+    size_t operator()(lve::LveModel::Vertex const &vertex) const {
+      size_t seed = 0;
+      lve::hashCombine(seed, vertex.position, vertex.color, vertex.normal, vertex.uv);
+      return seed;
+    }
+  };
+}
 
 namespace lve {
     LveModel::LveModel(LveDevice &device, const LveModel::Builder &builder) : lveDevice{device} {
@@ -32,7 +43,6 @@ namespace lve {
     std::unique_ptr<LveModel> LveModel::createModelFromFile(LveDevice &device, const std::string &filepath) {
       Builder builder{};
       builder.loadModel(filepath);
-      std::cout << "Vertex count: " << builder.vertices.size() << "\n";
       return std::make_unique<LveModel>(device, builder);
     }
 
@@ -165,6 +175,7 @@ namespace lve {
       vertices.clear();
       indices.clear();
 
+      std::unordered_map<Vertex, uint32_t> uniqueVerticies{};
       for (const auto &shape : shapes) {
         for (const auto &index : shape.mesh.indices) {
           Vertex vertex{};
@@ -207,7 +218,11 @@ namespace lve {
             }
           }
 
-          vertices.push_back(vertex);
+          if (uniqueVerticies.count(vertex) == 0) {
+            uniqueVerticies[vertex] = static_cast<uint32_t>(vertices.size());
+            vertices.push_back(vertex);
+          }
+          indices.push_back(uniqueVerticies[vertex]);
         }
       }
     }
